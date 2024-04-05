@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <windows.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define height 15
 #define width 30
@@ -74,7 +74,7 @@ char town[height][width] = {
 };
 
 void clear() {
-    system("cls");
+    system("clear");
 }
 
 int generateFoodX() {
@@ -127,30 +127,42 @@ void pushHead(char map[height][width]) {
     struct Node* temp = head;
 
     data->next = head;
+    data->prev = tail;
     head = data;
-    head->prev = tail;
 }
 
 
 void draw() {
+    srand(time(NULL));
 
-    if(head == NULL) {
+    if(curr == NULL) {
         printf("Map not found\n");
         return;
     }
 
     if(playerX < 0) {
         playerX = width - 1;
-        head = head->prev;
+        curr = curr->prev;
         foodX = generateFoodX();
         foodY = generateFoodY();
     } else if(playerX > width - 1) {
         playerX = 0;
+        curr = curr->next;
         foodX = generateFoodX();
         foodY = generateFoodY();
     }
 
     printf("Score: %d\n", score);
+    while(curr->map[foodY][foodX] == '#' || foodX > 30 || foodY > 15) {
+        foodX = generateFoodX();
+        foodY = generateFoodY();
+    }
+
+    if(playerX == foodX && playerY == foodY) {
+        foodX = generateFoodX();
+        foodY = generateFoodY();
+        score++;
+    }
 
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
@@ -159,18 +171,11 @@ void draw() {
                 printf("0");
             } else if(foodX == x && foodY == y) {
                 printf("&");
-            } else if(playerX == foodX && playerY == foodY) {
-                printf(" ");
-            }else {
-                printf("%c", head->map[y][x]);
+            } else {
+                printf("%c", curr->map[y][x]);
             }
 
-            while(head->map[foodX][foodY] == '#') {
-                foodX = generateFoodX();
-                foodY = generateFoodY();
-            }
-
-            if(head->map[playerY][playerX] == '#') {
+            if(curr->map[playerY][playerX] == '#') {
                 gameOver = false;
             }
         }
@@ -198,23 +203,34 @@ void play() {
                 break;
             case 'a':
                 playerX--;
+                if (curr == head && playerX < 0) {
+                    playerX = width - 1;
+                    curr = tail;
+                }
                 break;
             case 'd':
                 playerX++;
+                if (curr == tail && playerX >= width) {
+                    playerX = 0;
+                    curr = head;
+                }
                 break;
             case 's':
                 playerY++;
                 break;
         }
+
+        if(playerX == foodX && playerY == foodY) {
+            score++;
+        }
     }
 
-    
     if(!(gameOver)) {
         clear();
-        printf("Game Over...\n");
+        printf("GAME OVER\n");
+        printf("Press enter to continue...");
         getchar();
     }
-
 }
 
 void menu() {
