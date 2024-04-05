@@ -77,6 +77,14 @@ void clear() {
     system("cls");
 }
 
+int generateFoodX() {
+    return rand() % ((30 - 1 + 1) + 1);
+}
+
+int generateFoodY() {
+    return rand() % ((15 - 1 + 1) + 1);
+}
+
 struct Node {
     char map[height][width];
     struct Node *next, *prev;
@@ -134,9 +142,12 @@ void draw() {
     if(playerX < 0) {
         playerX = width - 1;
         head = head->prev;
+        foodX = generateFoodX();
+        foodY = generateFoodY();
     } else if(playerX > width - 1) {
         playerX = 0;
-        head = head->next;
+        foodX = generateFoodX();
+        foodY = generateFoodY();
     }
 
     printf("Score: %d\n", score);
@@ -146,8 +157,17 @@ void draw() {
 
             if(playerX == x && playerY == y) {
                 printf("0");
-            } else {
+            } else if(foodX == x && foodY == y) {
+                printf("&");
+            } else if(playerX == foodX && playerY == foodY) {
+                printf(" ");
+            }else {
                 printf("%c", head->map[y][x]);
+            }
+
+            while(head->map[foodX][foodY] == '#') {
+                foodX = generateFoodX();
+                foodY = generateFoodY();
             }
 
             if(head->map[playerY][playerX] == '#') {
