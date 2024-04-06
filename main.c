@@ -133,23 +133,22 @@ void pushHead(char map[height][width]) {
 
 
 void draw() {
-    srand(time(NULL));
 
     if(curr == NULL) {
         printf("Map not found\n");
         return;
     }
 
+    if(curr->map[playerY][playerX] == '#') {
+        gameOver = false;
+    }
+
     if(playerX < 0) {
         playerX = width - 1;
         curr = curr->prev;
-        foodX = generateFoodX();
-        foodY = generateFoodY();
     } else if(playerX > width - 1) {
         playerX = 0;
         curr = curr->next;
-        foodX = generateFoodX();
-        foodY = generateFoodY();
     }
 
     printf("Score: %d\n", score);
@@ -161,8 +160,8 @@ void draw() {
     if(playerX == foodX && playerY == foodY) {
         foodX = generateFoodX();
         foodY = generateFoodY();
-        score++;
     }
+
 
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
@@ -170,13 +169,9 @@ void draw() {
             if(playerX == x && playerY == y) {
                 printf("0");
             } else if(foodX == x && foodY == y) {
-                printf("&");
+                printf("A");
             } else {
                 printf("%c", curr->map[y][x]);
-            }
-
-            if(curr->map[playerY][playerX] == '#') {
-                gameOver = false;
             }
         }
         printf("\n");
