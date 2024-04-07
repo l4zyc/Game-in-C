@@ -92,7 +92,7 @@ struct Node {
 
 struct Node* newNode(char map[height][width]) {
     struct Node* temp = (struct Node*) malloc(sizeof(struct Node));
-
+    
     for(int i = 0; i < height; i++) {
         strcpy(temp->map[i], map[i]);
     }  
@@ -139,16 +139,16 @@ void draw() {
         return;
     }
 
-    if(curr->map[playerY][playerX] == '#') {
-        gameOver = false;
-    }
-
     if(playerX < 0) {
         playerX = width - 1;
         curr = curr->prev;
     } else if(playerX > width - 1) {
         playerX = 0;
         curr = curr->next;
+    }
+
+    if(curr->map[playerY][playerX] == '#') {
+        gameOver = false;
     }
 
     printf("Score: %d\n", score);
@@ -165,7 +165,6 @@ void draw() {
 
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
-
             if(playerX == x && playerY == y) {
                 printf("0");
             } else if(foodX == x && foodY == y) {
